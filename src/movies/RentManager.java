@@ -8,6 +8,9 @@ import java.net.Socket;
 
 public class RentManager {
     
+	final static String host = "127.0.0.1";
+	final static int port = 81;
+	
     public static long calculatePrice(List<Buyable> buyableProducts) {
     	long price = 0;
     	for (Buyable buyable : buyableProducts) {
@@ -94,5 +97,30 @@ public class RentManager {
 	
     	System.out.print("\nThe price of two movies (The Mist, The Punisher) and two games (Red Alert, Super Mario): ");
     	System.out.println(RentManager.calculatePrice(products));
-    }
-}
+    	
+		try {
+			Socket clientSocket = new Socket(host, port);
+			System.out.println("[CLIENT][INFO] - Connected to the server.\n");
+			ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
+			ObjectInputStream fromServer = new ObjectInputStream(clientSocket.getInputStream());
+			Thread.sleep(500);
+			send(toServer, Command.PUT);
+			send(toServer, ryanReynolds);
+			send(toServer, pHayward);
+			send(toServer, tobyJones );
+			send(toServer, thomasJane);
+			send(toServer, Command.GET);
+		
+			send(toServer, Command.EXIT);
+			clientSocket.close();
+		} catch (IOException |InterruptedException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void send(ObjectOutputStream x, Object object) throws IOException {
+		x.write(0);
+		x.writeObject(object);
+	}
+ }
