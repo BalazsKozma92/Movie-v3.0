@@ -1,8 +1,6 @@
 package movies;
 
-import java.io.Serializable;
-
-public abstract class Product {
+public abstract class Product implements java.io.Serializable {
     private String id;
     private String title;
     private Person reader;

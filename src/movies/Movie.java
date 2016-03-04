@@ -3,7 +3,7 @@ package movies;
 import java.util.List;
 import java.io.Serializable;
 
-public class Movie extends Product implements Buyable {
+public class Movie extends Product implements Buyable, java.io.Serializable {
     enum Genre {
 	ACTION, DRAMA, SCI_FI, HORROR, THRILLER, ROMANTIC, COMEDY
     };

@@ -1,8 +1,6 @@
 package movies;
 
-import java.io.Serializable;
-
-public class Person {
+public class Person implements java.io.Serializable {
     private String firstName;
     private String lastName;
     enum Gender {

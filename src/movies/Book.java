@@ -1,8 +1,6 @@
 package movies;
 
-import java.io.Serializable;
-
-public class Book extends Product {
+public class Book extends Product implements java.io.Serializable{
     private Person author;
     
     public Book(String title, Person reader, Person author) {

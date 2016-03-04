@@ -1,128 +1,129 @@
 package movies;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectServer {
-	final static String filePathName = "demo.ser";
-	ServerMode mode = ServerMode.LOAD;
+	ServerMode mode = ServerMode.SAVE;
 	static FileOutputStream fos;
 	static ObjectOutputStream oos;
+	Socket socket;
 
 	public void runServer() {
-		System.out.printf("[SERVER][INFO] - Startig server.\n[SERVER][INFO] - Actual server mode: " + mode + "\n");
+		System.out.printf("[SERVER] - Startig server.\n[SERVER] - Actual server mode: " + mode + "\n");
 		try {
-			ServerSocket serverSocket = new ServerSocket(81);
-			Socket socket = serverSocket.accept();
-			System.out.println("[SERVER][INFO] - Client connected");
+			ServerSocket serverSocket = new ServerSocket(811);
+			socket = serverSocket.accept();
+			System.out.println("[SERVER] - Client connected");
 
-			ObjectOutputStream toClient = new ObjectOutputStream(socket.getOutputStream());
-			ObjectInputStream fromClient = new ObjectInputStream(socket.getInputStream());
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
 			
 			while (true) {
-				if (fromClient.read() > -1) {
-					Object objectFromClient = fromClient.readObject();
-					if (objectFromClient instanceof Command && ((Command) objectFromClient) == Command.EXIT) {
-						System.out.println("[SERVER][CMD] - Clients & server shut down.");
-						break;
-					} else if (objectFromClient instanceof Command && ((Command) objectFromClient) == Command.GET) {
-						mode = ServerMode.LOAD;
-						System.out.println("[SERVER][CMD] - Getting objects from file.");
-						//deserialize();
-						System.out.println("[SERVER][INFO] - Objects load to the client side.");
-						//load();
-					} else if (objectFromClient instanceof Command && ((Command) objectFromClient) == Command.PUT) {
+					Command objectOis = (Command) ois.readObject();
+					if (objectOis.equals(Command.PUT)) {
 						mode = ServerMode.SAVE;
-						System.out.println("[SERVER][CMD] - Actual server mode: " + mode);
-					} else if (mode == ServerMode.SAVE) {
-						save(objectFromClient);
-						System.out.println("[SERVER][INFO] - Objects saved.");
+						getMode();
+						System.out.println("[SERVER] - Actual server mode: " + mode);
 					}
+					else if (objectOis.equals(Command.GET)) {
+						mode = ServerMode.LOAD;
+						getMode();
+						System.out.println("[SERVER] - Getting objects from file.");
+						System.out.println("[SERVER] - Objects load to the client side.");
+					}
+					else if (objectOis.equals(Command.EXIT)) {
+						System.out.println("[SERVER] - Clients & server shut down.");
+						break;
+					} 
 				}
-			}
 			serverSocket.close();
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	public static void deserialize() {
-		Person deserializedPerson = null;
-		try {
-			FileInputStream file = new FileInputStream(filePathName);
-			ObjectInputStream buffer = new ObjectInputStream(file);
-			deserializedPerson = (Person) buffer.readObject();
-			buffer.close();
-			file.close();
-			System.out.println(deserializedPerson);
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException i) {
-			i.printStackTrace();
-		}
-
+	@SuppressWarnings("unchecked")
+	public List<Product> deserialize() {
+		List<Product> deserializedList = new ArrayList<>();	
+		 try {
+	         FileInputStream fis = new FileInputStream("c:\\savedFiles\\files.ser");
+	         ObjectInputStream ois = new ObjectInputStream(fis);
+	         deserializedList = (List<Product>) ois.readObject();
+	         ois.close();
+	         fis.close();
+	         System.out.println(deserializedList);
+	     }
+		 catch(IOException i) {
+	         i.printStackTrace();
+	     }
+		 catch(ClassNotFoundException c) {
+	         System.out.println("Person class not found.");
+	         c.printStackTrace();
+	     }
+		 return deserializedList;
 	}
 
-	public static void save(Object o) {
+	public void serialize(List<Product> productList){
 		try {
-			fos = new FileOutputStream(filePathName, true);
-			oos = new ObjectOutputStream(fos);
-			oos.writeObject(o);
+			File file = new File("c:\\savedFiles\\files.ser");
+			FileOutputStream fos = new  FileOutputStream(file);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(productList);
 			oos.close();
 			fos.close();
-		} catch (IOException e) {
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void save() {
+		try {
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			@SuppressWarnings("unchecked")
+			List<Product> productList = (List<Product>) ois.readObject();
+			serialize(productList);
+			ois.close();
+			System.out.println("Serialized data is saved at C:\\savedfiles\\files.ser");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public ServerMode getMode() {
-		return mode;
-	}
-
-	public void setMode(ServerMode mode) {
-		this.mode = mode;
+	public void getMode() {
+		switch (mode) {
+		case LOAD:
+			load();
+			break;
+		case SAVE:
+			save();
+			break;
+		default:
+			break;
+		}
 	}
 	
-	public static List<Object> load(){
-		List<Object> objectList = new ArrayList<>();
+	public void load(){
 		try {
-			FileInputStream fis = new FileInputStream(filePathName);
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			Object oneObject = ois.readObject();
-			while(ois != null){
-				try {
-					objectList.add(oneObject);
-					System.out.println(oneObject);
-					continue;
-					} 
-				catch (Exception e) {
-					e.printStackTrace();
-					}
-				ois.close();
-				fis.close();
-				System.out.println(objectList);	
-			}
+			ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+			List<Product> productList = deserialize();
+			oos.writeObject(productList);
+			oos.close();
+		} 
+		catch (Exception e) {
+			e.printStackTrace();
 		}
-	    catch(ClassNotFoundException e)
-	    {
-	      e.printStackTrace();
-	    }
-	    catch(IOException i)
-	    {
-	      i.printStackTrace();
-	    }
-		System.out.println(objectList);
-		return objectList;
 	}
 
 	public static void main(String[] args) {
 		ObjectServer server = new ObjectServer();
 		server.runServer();
-	}
-
-	@Override
-	public String toString() {
-		return "";
 	}
 }

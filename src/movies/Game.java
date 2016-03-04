@@ -3,7 +3,7 @@ package movies;
 import java.util.List;
 import java.io.Serializable;
 
-public class Game extends Product implements Buyable {
+public class Game extends Product implements Buyable, java.io.Serializable {
     private static final float DISCOUNT = 0.2f;
     
     private boolean preOrdered;

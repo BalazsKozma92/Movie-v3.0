@@ -7,9 +7,9 @@ import java.io.*;
 import java.net.Socket;
 
 public class RentManager {
-    
-	final static String host = "127.0.0.1";
-	final static int port = 81;
+  
+	static Socket socket;
+	static List<Product> productList;
 	
     public static long calculatePrice(List<Buyable> buyableProducts) {
     	long price = 0;
@@ -20,74 +20,75 @@ public class RentManager {
     }
     
     public static void main(String[] args) {
-    	Person lTook = new Person("Laura", "Took", Gender.FEMALE, 294);
-    	Person fGammidge = new Person("Flambard", "Gammidge", Gender.MALE, 342);
-    	Person pHayward = new Person("Pervinca", "Hayward", Gender.FEMALE, 351);
-    	Person tSandyman = new Person("Tobold", "Sandyman", Gender.MALE, 340);
-    	Person thomasJane = new Person("Thomas", "Jane", Gender.MALE, 1424);
-    	Person ryanReynolds = new Person("Ryan", "Reynolds", Gender.MALE, 1211);
-    	Person emilyRutherfurd = new Person("Emily", "Rutherfurd", Gender.FEMALE, 1637);
-    	Person tobyJones = new Person("Toby", "Jones", Gender.MALE, 1496);
-    	Person hayleyAtwell = new Person("Hayley", "Atwell", Gender.FEMALE, 1641);
-    	Person danBrown = new Person("Dan", "Brown", Gender.MALE, 4611);
-    	Person aliceCary = new Person("Alice", "Cary", Gender.FEMALE, 3248);
-    	Person isaacAsimov = new Person("Isaac", "Asimov", Gender.MALE, 9348);
+    	Person csViki = new Person("Csoma", "Viki", Gender.FEMALE, 294);
+    	Person pIstvan = new Person("Pasztor", "Istvan", Gender.MALE, 342);
+    	Person sDalma = new Person("Simai", "Dalma", Gender.FEMALE, 351);
+    	Person tHardy = new Person("Tom", "Hardy", Gender.MALE, 340);
+    	Person leoCap = new Person("Leonardo", "DiCaprio", Gender.MALE, 1424);
+    	Person jAckles = new Person("Jensen", "Ackles", Gender.MALE, 1211);
+    	Person wAlice = new Person("Wonder", "Alice", Gender.FEMALE, 1637);
+    	Person jPadelacki = new Person("Jared", "Padelacki", Gender.MALE, 1496);
+    	Person jLawrence = new Person("Jennifer", "Atwell", Gender.FEMALE, 1641);
+    	Person dRadcliffe = new Person("Daniel", "Radcliffe", Gender.MALE, 4611);
+    	Person nDobrev = new Person("Nina", "Dobrev", Gender.FEMALE, 3248);
+    	Person jDepp = new Person("Johnny", "Depp", Gender.MALE, 9348);
 	
     	List<Person> theMistCast = new ArrayList<Person>();
-    	theMistCast.add(thomasJane);
-    	theMistCast.add(hayleyAtwell);
+    	theMistCast.add(leoCap);
+    	theMistCast.add(jLawrence);
 	
     	List<Person> thePunisherCast = new ArrayList<Person>();
-    	thePunisherCast.add(thomasJane);
-    	thePunisherCast.add(ryanReynolds);
+    	thePunisherCast.add(leoCap);
+    	thePunisherCast.add(jAckles);
 	
     	List<Person> vanWilderCast = new ArrayList<Person>();
-    	vanWilderCast.add(ryanReynolds);
-    	vanWilderCast.add(emilyRutherfurd);
+    	vanWilderCast.add(jAckles);
+    	vanWilderCast.add(wAlice);
 	
-    	Product theMist = new Movie("The Mist", fGammidge, Genre.HORROR, 126, 7.2, theMistCast, 31);
-    	System.out.println(theMist);
+    	Product theMist = new Movie("The Mist", pIstvan, Genre.HORROR, 126, 7.2, theMistCast, 31);
+    	//System.out.println(theMist);
 	
-    	Product thePunisher = new Movie("The Punisher", tSandyman, Genre.ACTION, 124, 6.5, thePunisherCast, 24);
-    	System.out.println(thePunisher);
+    	Product thePunisher = new Movie("The Punisher", tHardy, Genre.ACTION, 124, 6.5, thePunisherCast, 24);
+    	//System.out.println(thePunisher);
 	
-    	Product vanWilder = new Movie("Van Wilder", lTook, Genre.COMEDY, 112, 6.4, vanWilderCast, 24);
-    	System.out.println(vanWilder);
+    	Product vanWilder = new Movie("Van Wilder", csViki, Genre.COMEDY, 112, 6.4, vanWilderCast, 24);
+    	//System.out.println(vanWilder);
 	
     	List<Person> redAlertStaff = new ArrayList<Person>();
-    	redAlertStaff.add(pHayward);
-    	redAlertStaff.add(tobyJones);
+    	redAlertStaff.add(sDalma);
+    	redAlertStaff.add(jPadelacki);
 	
     	List<Person> saintsRowStaff = new ArrayList<Person>();
-    	saintsRowStaff.add(hayleyAtwell);
-    	saintsRowStaff.add(fGammidge);
+    	saintsRowStaff.add(jLawrence);
+    	saintsRowStaff.add(pIstvan);
 	
     	List<Person> superMarioStaff = new ArrayList<Person>();
-    	superMarioStaff.add(ryanReynolds);
-    	superMarioStaff.add(tSandyman);
+    	superMarioStaff.add(jAckles);
+    	superMarioStaff.add(tHardy);
 	
-    	Product redAlert = new Game("Red Alert", pHayward, false, redAlertStaff, 17);
-    	System.out.println(redAlert);
+    	Product redAlert = new Game("Red Alert", sDalma, false, redAlertStaff, 17);
+    	//System.out.println(redAlert);
 	
-    	Product saintsRow = new Game("Saints Row", thomasJane, true, saintsRowStaff, 26);
-    	System.out.println(saintsRow);
+    	Product saintsRow = new Game("Saints Row", leoCap, true, saintsRowStaff, 26);
+    	//System.out.println(saintsRow);
 	
-    	Product superMario = new Game("Super Mario", tobyJones, true, superMarioStaff, 114);
-    	System.out.println(superMario);
+    	Product superMario = new Game("Super Mario", jPadelacki, true, superMarioStaff, 114);
+    	//System.out.println(superMario);
 	
-    	Product inferno = new Book("Inferno", fGammidge, danBrown);
-    	System.out.println(inferno);
+    	Product inferno = new Book("Inferno", pIstvan, dRadcliffe);
+    	//System.out.println(inferno);
 	
-    	Product picturesCountry = new Book("Pictures of Country Life", hayleyAtwell, aliceCary);
-    	System.out.println(picturesCountry);
+    	@SuppressWarnings("unused")
+		Product picturesCountry = new Book("Pictures of Country Life", jLawrence, nDobrev);
+    	//System.out.println(picturesCountry);
 	
-    	Product iRobot = new Book("I, Robot", lTook, isaacAsimov);
-    	System.out.println(iRobot);
+    	Product iRobot = new Book("I, Robot", csViki, jDepp);
+    	//System.out.println(iRobot);
 	
-    	System.out.println("\nThese are product investments:");
-    	System.out.println(redAlert.getTitle() + " " + redAlert.getInvestment());
-    	System.out.println(vanWilder.getTitle() + " " + vanWilder.getInvestment());
-    	System.out.println(iRobot.getTitle() + " " + iRobot.getInvestment());
+    	//System.out.println("\nThese are product investments:");
+    	//System.out.println(redAlert.getTitle() + " " + redAlert.getInvestment());
+    	//System.out.println(vanWilder.getTitle() + " " + vanWilder.getInvestment());
+    	//System.out.println(iRobot.getTitle() + " " + iRobot.getInvestment());
 	
     	List<Buyable> products = new ArrayList<Buyable>();
     	products.add((Buyable) theMist);
@@ -95,32 +96,45 @@ public class RentManager {
     	products.add((Buyable) redAlert);
     	products.add((Buyable) superMario);
 	
-    	System.out.print("\nThe price of two movies (The Mist, The Punisher) and two games (Red Alert, Super Mario): ");
-    	System.out.println(RentManager.calculatePrice(products));
+    	//System.out.print("\nThe price of two movies (The Mist, The Punisher) and two games (Red Alert, Super Mario): ");
+    	//System.out.println(RentManager.calculatePrice(products));
     	
+    	List<Product> productList = new ArrayList<Product>();
+    	productList.add(theMist);
+    	productList.add(thePunisher);
+    	productList.add(redAlert);
+    	productList.add(superMario);
+    	productList.add(iRobot);
+    	productList.add(vanWilder);
+    	productList.add(inferno);
+    	productList.add(saintsRow);
+    	
+    	clientManager();
+}
+    public static void clientManager(){
 		try {
-			Socket clientSocket = new Socket(host, port);
-			System.out.println("[CLIENT][INFO] - Connected to the server.\n");
-			ObjectOutputStream toServer = new ObjectOutputStream(clientSocket.getOutputStream());
-			ObjectInputStream fromServer = new ObjectInputStream(clientSocket.getInputStream());
-			Thread.sleep(500);
-			send(toServer, Command.PUT);
-			send(toServer, ryanReynolds);
-			send(toServer, pHayward);
-			send(toServer, tobyJones );
-			send(toServer, thomasJane);
-			send(toServer, Command.GET);
-		
-			send(toServer, Command.EXIT);
-			clientSocket.close();
-		} catch (IOException |InterruptedException e) {
+			socket = new Socket("localhost", 811);
+			System.out.println("[CLIENT] - Connected to the server.\n");
+			ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+			ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
+			send(Command.PUT);
+			oos.writeObject(productList);
+			send(Command.GET);
+			@SuppressWarnings("unchecked")
+			List<Product> productList2 = (List<Product>) ois.readObject();
+			System.out.println(productList2.toString());
+			send(Command.EXIT);			
+			oos.close();
+			ois.close();
+			socket.close();
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	}
+    }
 
-	public static void send(ObjectOutputStream x, Object object) throws IOException {
-		x.write(0);
-		x.writeObject(object);
-	}
+	public static void send(Command command) throws IOException {
+		ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
+		oos.writeObject(command);	
+		}
  }
